@@ -1,9 +1,8 @@
 name: Build and deploy PHP app to Azure Web App
 
-
 env:
-  AZURE_WEBAPP_NAME: gestion-employes-app        # Web App name in Azure
-  AZURE_WEBAPP_PACKAGE_PATH: 'backend'          # Laravel folder
+  AZURE_WEBAPP_NAME: gestion-employes-app
+  AZURE_WEBAPP_PACKAGE_PATH: 'backend'
   PHP_VERSION: '8.2'
 
 on:
@@ -39,15 +38,12 @@ jobs:
     needs: build
 
     steps:
-      - uses: actions/checkout@v4
-
       - name: Download artifact from build job
         uses: actions/download-artifact@v4
         with:
           name: php-app
-          path: ./
+          path: ./backend
 
-      # NEW: Azure login so webapps-deploy has credentials
       - name: Azure login
         uses: azure/login@v2
         with:
@@ -57,5 +53,5 @@ jobs:
         uses: azure/webapps-deploy@v2
         with:
           app-name: ${{ env.AZURE_WEBAPP_NAME }}
-          package: .
-
+          publish-profile: ${{ secrets.AZURE_WEBAPP_PUBLISH_PROFILE }}
+          package: ./backend
